@@ -1,0 +1,396 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Planner Pro</title>
+    <!-- Mengambil Font Google Poppins agar terlihat modern -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Mengambil Icon dari FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #6a11cb;
+            --secondary-color: #2575fc;
+            --text-color: #333;
+            --bg-glass: rgba(255, 255, 255, 0.9);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: var(--text-color);
+        }
+
+        .container {
+            background: var(--bg-glass);
+            width: 100%;
+            max-width: 900px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+        }
+
+        /* Bagian Kiri: Timer & Quote */
+        .left-panel {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .date-display {
+            font-size: 1.2rem;
+            font-weight: 300;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .timer-box {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            backdrop-filter: blur(5px);
+        }
+
+        .timer-display {
+            font-size: 3rem;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .timer-controls button {
+            background: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 50px;
+            margin: 0 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+            color: var(--primary-color);
+        }
+
+        .timer-controls button:hover {
+            transform: scale(1.05);
+            background: #f0f0f0;
+        }
+
+        .quote-box {
+            margin-top: 30px;
+            font-style: italic;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .quote-btn {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 0.8rem;
+        }
+
+        .quote-btn:hover {
+            background: white;
+            color: var(--primary-color);
+        }
+
+        /* Bagian Kanan: Task List */
+        .right-panel {
+            padding: 40px;
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        #taskInput {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        #taskInput:focus {
+            border-color: var(--secondary-color);
+        }
+
+        #addBtn {
+            padding: 12px 20px;
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        #addBtn:hover {
+            background: var(--primary-color);
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        li {
+            background: white;
+            border-bottom: 1px solid #eee;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.2s;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        li:hover {
+            transform: translateX(5px);
+        }
+
+        li.completed span {
+            text-decoration: line-through;
+            color: #aaa;
+        }
+
+        .delete-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: 0.3s;
+        }
+
+        li:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .check-btn {
+            background: transparent;
+            border: 2px solid var(--secondary-color);
+            color: var(--secondary-color);
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        li.completed .check-btn {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        /* Responsif untuk HP */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            .left-panel {
+                padding: 30px;
+            }
+            .timer-display {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Panel Kiri: Waktu & Motivasi -->
+        <div class="left-panel">
+            <div class="date-display" id="dateDisplay">Senin, 1 Januari 2024</div>
+            
+            <div class="timer-box">
+                <div class="timer-display" id="timer">25:00</div>
+                <div class="timer-controls">
+                    <button onclick="startTimer()"><i class="fas fa-play"></i></button>
+                    <button onclick="pauseTimer()"><i class="fas fa-pause"></i></button>
+                    <button onclick="resetTimer()"><i class="fas fa-redo"></i></button>
+                </div>
+            </div>
+
+            <div class="quote-box">
+                <p id="quoteText">"Kegagalan adalah bumbu yang memberi rasa pada kesuksesan."</p>
+                <button class="quote-btn" onclick="newQuote()">Ganti Quote</button>
+            </div>
+        </div>
+
+        <!-- Panel Kanan: Daftar Tugas -->
+        <div class="right-panel">
+            <div class="header-title">Daftar Tugas Hari Ini</div>
+            
+            <div class="input-group">
+                <input type="text" id="taskInput" placeholder="Tulis tugas baru...">
+                <button id="addBtn" onclick="addTask()"><i class="fas fa-plus"></i></button>
+            </div>
+
+            <ul id="taskList">
+                <!-- Tugas akan muncul di sini -->
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. LOGIKA JAM & TANGGAL ---
+        function updateDateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('dateDisplay').innerText = now.toLocaleDateString('id-ID', options);
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime(); // Jalankan langsung saat load
+
+        // --- 2. LOGIKA TIMER (FOCUS MODE) ---
+        let timerInterval;
+        let timeLeft = 25 * 60; // 25 menit dalam detik
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timer').innerText = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            if (!timerInterval) {
+                timerInterval = setInterval(() => {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateTimerDisplay();
+                    } else {
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                        alert("Waktu Habis! Istirahatlah.");
+                    }
+                }, 1000);
+            }
+        }
+
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            timeLeft = 25 * 60;
+            updateTimerDisplay();
+        }
+
+        // --- 3. LOGIKA QUOTE MOTIVASI ---
+        const quotes = [
+            "\"Kegagalan adalah bumbu yang memberi rasa pada kesuksesan.\"",
+            "\"Jangan berhenti saat lelah, berhentilah saat selesai.\"",
+            "\"Masa depan ditentukan oleh apa yang kamu lakukan hari ini.\"",
+            "\"Satu langkah kecil setiap hari membawa hasil besar.\"",
+            "\"Fokus pada proses, hasil akan mengikuti.\"",
+            "\"Belajar hari ini, memimpin besok.\""
+        ];
+
+        function newQuote() {
+            const randomIndex = Math.floor(Math.random() * quotes.length);
+            document.getElementById('quoteText').innerText = quotes[randomIndex];
+        }
+
+        // --- 4. LOGIKA DAFTAR TUGAS (TO-DO LIST) ---
+        const taskInput = document.getElementById('taskInput');
+        const taskList = document.getElementById('taskList');
+
+        // Tambah tugas dengan tombol Enter
+        taskInput.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                addTask();
+            }
+        });
+
+        function addTask() {
+            const taskText = taskInput.value;
+            if (taskText === '') {
+                alert("Tulis tugas dulu dong!");
+                return;
+            }
+
+            const li = document.createElement('li');
+            
+            // Checkbox custom
+            const checkBtn = document.createElement('button');
+            checkBtn.className = 'check-btn';
+            checkBtn.innerHTML = '<i class="fas fa-check"></i>';
+            checkBtn.onclick = function() {
+                li.classList.toggle('completed');
+            };
+
+            // Text Tugas
+            const span = document.createElement('span');
+            span.innerText = taskText;
+
+            // Tombol Hapus
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-btn';
+            deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+            deleteBtn.onclick = function() {
+                li.remove();
+            };
+
+            li.appendChild(checkBtn);
+            li.appendChild(span);
+            li.appendChild(deleteBtn);
+            taskList.appendChild(li);
+
+            taskInput.value = ''; // Kosongkan input setelah tambah
+        }
+    </script>
+</body>
+</html>
